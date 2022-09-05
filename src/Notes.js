@@ -63,25 +63,35 @@ export const Notes = () => {
   const [category, setcategory] = React.useState("");
   const [deleteE, setdelete] = useState(false);
   const [search, setsearch] = useState("");
-
+  const [edit, setedit] = useState(false);
+  const [editIndex, seteditindex] = useState("");
   const [text, settext] = React.useState("");
   const clickhandler = () => {
     if (title === "") setErr("Title can't be empty");
     else if (category === "") setErr("Category can't be empty");
     else if (text === "") setErr("Enter something before saving");
     else {
+      var date = new Date();
+      date = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
       var newPost = {
         id: data.length + 1,
         title: title,
         category: category,
         text: text,
+        date: date,
       };
-      data.push(newPost);
+      if (edit) {
+        data[editIndex] = newPost;
+      } else {
+        data.push(newPost);
+      }
       alert("Sucessfully saved!");
       setOpen(false);
       settext("");
       settitle("");
       setcategory("");
+      setedit(false);
+      seteditindex("");
     }
   };
   function debounce(func, timeout = 1000) {
@@ -105,6 +115,8 @@ export const Notes = () => {
     settext("");
     settitle("");
     setcategory("");
+    setedit(false);
+    seteditindex("");
   };
   var flag = 0;
   return (
@@ -162,6 +174,10 @@ export const Notes = () => {
                 settext,
                 deleteE,
                 setdelete,
+                edit,
+                setedit,
+                editIndex,
+                seteditindex,
               ]}
             >
               {search === "" ? (
@@ -175,6 +191,7 @@ export const Notes = () => {
                           text={item.text}
                           id={item.id}
                           color={generateRandomColor()}
+                          date={item.date}
                         />
                       </>
                     ))}
@@ -201,6 +218,7 @@ export const Notes = () => {
                               text={item.text}
                               id={item.id}
                               color={generateRandomColor()}
+                              date={item.date}
                             />
                           </>
                         ) : (
@@ -327,9 +345,9 @@ export const Notes = () => {
                 top: "0",
                 right: "0",
                 backgroundColor: "#EF5350",
-                color: "#fff",
+                color: "#000",
               }}
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
             >
               X
             </Button>
@@ -354,6 +372,10 @@ const Card = (props) => {
     settext,
     deleteE,
     setdelete,
+    edit,
+    setedit,
+    editIndex,
+    seteditindex,
   ] = useContext(EditContext);
 
   const editClickHandler = (e) => {
@@ -367,6 +389,8 @@ const Card = (props) => {
 
     settext(data[index].text);
     setOpen(true);
+    setedit(true);
+    seteditindex(index);
   };
   const deleteHandler = (e) => {
     var id = e.target.id;
@@ -400,6 +424,7 @@ const Card = (props) => {
       </h4>
       <hr />
       <h3>{props.title}</h3>
+      <span style={{color:"red"}}>Last modified: {props.date}</span>
       <p>{props.text}</p>
     </div>
   );

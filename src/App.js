@@ -5,7 +5,7 @@ import { Login } from "./login";
 
 export const Context = React.createContext();
 function App() {
-  const [logged, setLogged] = useState(0);
+  const [logged, setLogged] = useState(1);
   return (
     <div className="App">
       <Context.Provider value={[logged, setLogged]}>
